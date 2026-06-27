@@ -3,7 +3,19 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Menu, ChevronDown, User,  Phone, Home, BookOpen, Users, LogIn } from "lucide-react";
+import {
+  Search,
+  Menu,
+  ChevronDown,
+  User,
+  Phone,
+  Home,
+  BookOpen,
+  Users,
+  LogIn,
+  HelpCircle,
+  Headphones,
+} from "lucide-react";
 import Container from "./Container";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +29,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -34,6 +47,7 @@ const translations = {
     englishCourse: "English Language",
     spokenEnglish: "Spoken English",
     englishStories: "English Stories & Reading",
+    help: "Help",
   },
   bn: {
     home: "হোম",
@@ -44,21 +58,27 @@ const translations = {
     englishCourse: "English Language",
     spokenEnglish: "Spoken English",
     englishStories: "English Stories & Reading",
-  }
+    help: "সাহায্য",
+  },
 };
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileCoursesOpen, setIsMobileCoursesOpen] = useState(false);
   const [lang, setLang] = useState("en");
   const pathname = usePathname();
 
-  const filteredCourses = courses.filter((course) =>
-    course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (course.highlights && course.highlights.some((h) => h.toLowerCase().includes(searchQuery.toLowerCase())))
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (course.highlights &&
+        course.highlights.some((h) =>
+          h.toLowerCase().includes(searchQuery.toLowerCase()),
+        )),
   );
 
   const t = translations[lang];
@@ -73,6 +93,7 @@ const Navbar = () => {
     { name: t.home, href: "/", icon: Home },
     { name: t.courses, href: "/courses", icon: BookOpen, isDropdown: true },
     { name: t.about, href: "/about", icon: Users },
+    { name: t.help, href: "#", icon: HelpCircle, isHelp: true },
     { name: t.login, href: "/login", icon: LogIn },
   ];
 
@@ -108,12 +129,12 @@ const Navbar = () => {
       )}
     >
       <Container>
-        <div 
+        <div
           className={cn(
             "flex items-center justify-between transition-all duration-300",
-            isScrolled 
-              ? "bg-background/95 backdrop-blur-md shadow-lg rounded-full px-8 py-4 border border-border/50 mx-2 lg:mx-0" 
-              : "bg-transparent px-4 py-3"
+            isScrolled
+              ? "bg-background/95 backdrop-blur-md shadow-lg rounded-full px-8 py-4 border border-border/50 mx-2 lg:mx-0"
+              : "bg-transparent px-4 py-3",
           )}
         >
           {/* Logo */}
@@ -131,8 +152,11 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center bg-muted/40 p-1.5 rounded-full mx-auto">
             {navLinks.map((link) => {
-              const isActive = link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
-              
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname?.startsWith(link.href);
+
               if (link.isDropdown) {
                 return (
                   <div key={link.name} className="relative group">
@@ -141,8 +165,8 @@ const Navbar = () => {
                       className={cn(
                         "flex items-center text-sm font-medium px-4 py-1.5 rounded-full transition-colors",
                         isActive
-                          ? "bg-background text-orange-500 shadow-sm"
-                          : "text-muted-foreground hover:text-foreground"
+                          ? "bg-background text-primary shadow-sm"
+                          : "text-muted-foreground hover:text-foreground",
                       )}
                     >
                       {link.name}
@@ -150,9 +174,24 @@ const Navbar = () => {
                     </Link>
                     <div className="absolute top-full left-0 mt-3 w-56 bg-background border rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                       <div className="p-2 flex flex-col space-y-1">
-                        <Link href="/courses/english" className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors">{t.englishCourse}</Link>
-                        <Link href="/courses/spoken-english" className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors">{t.spokenEnglish}</Link>
-                        <Link href="/courses/english-stories" className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors">{t.englishStories}</Link>
+                        <Link
+                          href="/courses/english"
+                          className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                        >
+                          {t.englishCourse}
+                        </Link>
+                        <Link
+                          href="/courses/spoken-english"
+                          className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                        >
+                          {t.spokenEnglish}
+                        </Link>
+                        <Link
+                          href="/courses/english-stories"
+                          className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                        >
+                          {t.englishStories}
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -166,8 +205,8 @@ const Navbar = () => {
                   className={cn(
                     "text-sm font-medium px-4 py-1.5 rounded-full transition-colors",
                     isActive
-                      ? "bg-background text-orange-500 shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-background text-primary shadow-sm"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   {link.name}
@@ -178,7 +217,13 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-3 shrink-0">
-            <Dialog open={isSearchOpen} onOpenChange={(open) => { setIsSearchOpen(open); if (!open) setSearchQuery(""); }}>
+            <Dialog
+              open={isSearchOpen}
+              onOpenChange={(open) => {
+                setIsSearchOpen(open);
+                if (!open) setSearchQuery("");
+              }}
+            >
               <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden border-none shadow-2xl">
                 <DialogHeader className="p-4 border-b">
                   <DialogTitle className="sr-only">Search</DialogTitle>
@@ -199,8 +244,12 @@ const Navbar = () => {
                       <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
                         <Search className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      <p className="text-sm font-medium text-slate-700">Search for a course</p>
-                      <p className="text-xs text-muted-foreground mt-1">Type course name (e.g. English, Spoken) to see results</p>
+                      <p className="text-sm font-medium text-slate-700">
+                        Search for a course
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Type course name (e.g. English, Spoken) to see results
+                      </p>
                     </div>
                   ) : filteredCourses.length > 0 ? (
                     <div className="space-y-2">
@@ -211,7 +260,10 @@ const Navbar = () => {
                         <Link
                           key={course.slug}
                           href={`/courses/${course.slug}`}
-                          onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }}
+                          onClick={() => {
+                            setIsSearchOpen(false);
+                            setSearchQuery("");
+                          }}
                           className="flex items-center gap-4 p-3 rounded-2xl hover:bg-muted transition-colors group"
                         >
                           <img
@@ -221,10 +273,10 @@ const Navbar = () => {
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
-                              <span className="text-sm font-extrabold text-slate-900 group-hover:text-orange-500 transition-colors truncate">
+                              <span className="text-sm font-extrabold text-slate-900 group-hover:text-primary transition-colors truncate">
                                 {course.title}
                               </span>
-                              <span className="text-[10px] bg-orange-100 text-orange-600 font-bold px-2 py-0.5 rounded-full">
+                              <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">
                                 {course.price}
                               </span>
                             </div>
@@ -240,8 +292,12 @@ const Navbar = () => {
                       <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
                         <Search className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      <p className="text-sm font-medium text-slate-700">No matching courses found</p>
-                      <p className="text-xs text-muted-foreground mt-1">Try searching with different keywords</p>
+                      <p className="text-sm font-medium text-slate-700">
+                        No matching courses found
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Try searching with different keywords
+                      </p>
                     </div>
                   )}
                 </div>
@@ -260,44 +316,56 @@ const Navbar = () => {
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center space-x-5 xl:space-x-6">
               {/* Search Bar */}
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(true)}
                 className="flex items-center bg-background border border-border/60 rounded-full h-10 px-4 w-[180px] xl:w-[220px] hover:border-primary/50 transition-colors text-left shadow-sm"
               >
                 <Search className="h-4 w-4 text-muted-foreground mr-2" />
-                <span className="text-sm text-muted-foreground flex-1">{t.search}</span>
+                <span className="text-sm text-muted-foreground flex-1">
+                  {t.search}
+                </span>
               </button>
 
               {/* Language Switcher */}
               <div className="flex items-center bg-muted/60 rounded-full p-1 border border-border/40">
-                <button 
-                  onClick={() => setLang('bn')}
+                <button
+                  onClick={() => setLang("bn")}
                   className={cn(
                     "px-3 py-1 text-xs font-bold rounded-full transition-colors",
-                    lang === 'bn' ? "bg-[#10b981] text-white shadow-sm" : "text-muted-foreground hover:text-foreground"
+                    lang === "bn"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   BN
                 </button>
-                <button 
-                  onClick={() => setLang('en')}
+                <button
+                  onClick={() => setLang("en")}
                   className={cn(
                     "px-3 py-1 text-xs font-bold rounded-full transition-colors",
-                    lang === 'en' ? "bg-[#10b981] text-white shadow-sm" : "text-muted-foreground hover:text-foreground"
+                    lang === "en"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   EN
                 </button>
               </div>
 
-              {/* Phone */}
-              <a href="tel:16910" className="flex items-center text-[#10b981] font-bold text-lg hover:opacity-80 transition-opacity">
-                <Phone className="w-5 h-5 mr-1.5 fill-current" />
-                16910
-              </a>
+              {/* Help */}
+              <button
+                onClick={() => setIsHelpOpen(true)}
+                className="flex items-center text-primary font-bold text-lg hover:opacity-80 transition-opacity cursor-pointer gap-1.5"
+              >
+                <HelpCircle className="w-5 h-5 mr-1" />
+                <span>{t.help}</span>
+              </button>
 
-              {/* Login Link */}
-              <Link href="/login" className="flex items-center text-[#334155] font-medium text-[17px] hover:text-[#10b981] transition-colors ml-2">
+              {/* Login Link hidden for now */}
+              <Link
+                href="/login"
+                className="flex items-center text-[#334155] font-medium text-[17px] hover:text-[#10b981] transition-colors ml-2 hidden"
+              >
                 <User className="w-5 h-5 mr-2 stroke-[2.5]" />
                 {t.login}
               </Link>
@@ -318,7 +386,10 @@ const Navbar = () => {
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle menu</span>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 flex flex-col bg-white">
+                <SheetContent
+                  side="right"
+                  className="w-[300px] sm:w-[350px] p-0 flex flex-col bg-white"
+                >
                   <SheetHeader className="sr-only">
                     <SheetTitle>Mobile Menu</SheetTitle>
                   </SheetHeader>
@@ -326,33 +397,99 @@ const Navbar = () => {
                     <div className="flex flex-col space-y-1">
                       {mobileLinks.map((link) => {
                         const Icon = link.icon;
-                        
+
                         if (link.isDropdown) {
                           return (
                             <div key={link.name} className="flex flex-col">
                               <button
-                                onClick={() => setIsMobileCoursesOpen(!isMobileCoursesOpen)}
+                                onClick={() =>
+                                  setIsMobileCoursesOpen(!isMobileCoursesOpen)
+                                }
                                 className="flex items-center justify-between px-8 py-3.5 hover:bg-muted/50 transition-colors w-full text-left"
                               >
                                 <div className="flex items-center space-x-4">
-                                  <Icon className="w-[18px] h-[18px] text-orange-500" strokeWidth={2} />
-                                  <span className="text-[15px] font-medium text-[#1e293b]">{link.name}</span>
+                                  <Icon
+                                    className="w-[18px] h-[18px] text-primary"
+                                    strokeWidth={2}
+                                  />
+                                  <span className="text-[15px] font-medium text-[#1e293b]">
+                                    {link.name}
+                                  </span>
                                 </div>
-                                <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", isMobileCoursesOpen && "rotate-180")} />
+                                <ChevronDown
+                                  className={cn(
+                                    "w-4 h-4 text-muted-foreground transition-transform duration-200",
+                                    isMobileCoursesOpen && "rotate-180",
+                                  )}
+                                />
                               </button>
-                              
-                              <div className={cn("flex flex-col overflow-hidden transition-all duration-300 ease-in-out bg-muted/30", isMobileCoursesOpen ? "max-h-[400px] border-y border-border/40 py-2 opacity-100" : "max-h-0 opacity-0")}>
-                                <SheetClose nativeButton={false} render={<Link href="/courses/english" className="pl-16 pr-8 py-2.5 text-sm text-[#1e293b] hover:text-orange-500 transition-colors block" />}>
+
+                              <div
+                                className={cn(
+                                  "flex flex-col overflow-hidden transition-all duration-300 ease-in-out bg-muted/30",
+                                  isMobileCoursesOpen
+                                    ? "max-h-[400px] border-y border-border/40 py-2 opacity-100"
+                                    : "max-h-0 opacity-0",
+                                )}
+                              >
+                                <SheetClose
+                                  nativeButton={false}
+                                  render={
+                                    <Link
+                                      href="/courses/english"
+                                      className="pl-16 pr-8 py-2.5 text-sm text-[#1e293b] hover:text-primary transition-colors block"
+                                    />
+                                  }
+                                >
                                   {t.englishCourse}
                                 </SheetClose>
-                                <SheetClose nativeButton={false} render={<Link href="/courses/spoken-english" className="pl-16 pr-8 py-2.5 text-sm text-[#1e293b] hover:text-orange-500 transition-colors block" />}>
+                                <SheetClose
+                                  nativeButton={false}
+                                  render={
+                                    <Link
+                                      href="/courses/spoken-english"
+                                      className="pl-16 pr-8 py-2.5 text-sm text-[#1e293b] hover:text-primary transition-colors block"
+                                    />
+                                  }
+                                >
                                   {t.spokenEnglish}
                                 </SheetClose>
-                                <SheetClose nativeButton={false} render={<Link href="/courses/english-stories" className="pl-16 pr-8 py-2.5 text-sm text-[#1e293b] hover:text-orange-500 transition-colors block" />}>
+                                <SheetClose
+                                  nativeButton={false}
+                                  render={
+                                    <Link
+                                      href="/courses/english-stories"
+                                      className="pl-16 pr-8 py-2.5 text-sm text-[#1e293b] hover:text-primary transition-colors block"
+                                    />
+                                  }
+                                >
                                   {t.englishStories}
                                 </SheetClose>
                               </div>
                             </div>
+                          );
+                        }
+
+                        if (link.isHelp) {
+                          return (
+                            <SheetClose
+                              key={link.name}
+                              nativeButton={false}
+                              render={
+                                <button
+                                  onClick={() => setIsHelpOpen(true)}
+                                  className="flex items-center space-x-4 px-8 py-3.5 hover:bg-muted/50 transition-colors w-full text-left cursor-pointer"
+                                />
+                              }
+                            >
+                              <Icon
+                                className="w-[18px] h-[18px] text-primary"
+                                strokeWidth={2}
+                              />
+                              <span className="text-[15px] font-medium text-[#1e293b]">
+                                {link.name}
+                              </span>
+                            </SheetClose>
                           );
                         }
 
@@ -367,8 +504,13 @@ const Navbar = () => {
                               />
                             }
                           >
-                            <Icon className="w-[18px] h-[18px] text-orange-500" strokeWidth={2} />
-                            <span className="text-[15px] font-medium text-[#1e293b]">{link.name}</span>
+                            <Icon
+                              className="w-[18px] h-[18px] text-primary"
+                              strokeWidth={2}
+                            />
+                            <span className="text-[15px] font-medium text-[#1e293b]">
+                              {link.name}
+                            </span>
                           </SheetClose>
                         );
                       })}
@@ -380,6 +522,48 @@ const Navbar = () => {
           </div>
         </div>
       </Container>
+
+      {/* Help Dialog */}
+      <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+        <DialogContent className="sm:max-w-[400px] p-6 rounded-3xl border border-border bg-white shadow-2xl">
+          <DialogHeader className="flex flex-col items-center justify-center text-center pt-4 pb-2">
+            <DialogTitle className="text-2xl font-bold text-slate-800 tracking-tight">
+              {lang === "bn" ? "গ্রাহক সেবা" : "Customer Support"}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground mt-2 max-w-[280px]">
+              {lang === "bn" 
+                ? "আপনার যেকোনো প্রশ্ন বা সহযোগিতার জন্য আমাদের হেল্পলাইনে কল করুন।" 
+                : "For any questions or support, call our helpline number."}
+            </DialogDescription>
+            
+            {/* Glowing support logo / icon container */}
+            <div className="relative my-6 flex justify-center">
+                    <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl animate-pulse" />
+              <div className="relative w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                <Headphones className="w-10 h-10 text-white animate-pulse" />
+              </div>
+              <div className="absolute bottom-1 right-1 w-4 h-4 bg-primary border-2 border-white rounded-full animate-pulse" />
+            </div>
+          </DialogHeader>
+
+          <div className="flex flex-col items-center gap-4 mt-2 mb-4">
+            <a
+              href="tel:16910"
+              className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-primary text-white rounded-2xl font-black text-2xl shadow-md hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] group"
+            >
+              <Phone className="w-6 h-6 fill-current animate-bounce" style={{ animationDuration: '3s' }} />
+              16910
+            </a>
+
+            <div className="flex items-center gap-1.5 text-primary bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
+              <span className="w-1.5 h-1.5 bg-primary rounded-full animate-ping" />
+              <span>
+                {lang === "bn" ? "সরাসরি কথা বলুন (২৪/৭)" : "Available 24/7 Support"}
+              </span>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </nav>
   );
 };
